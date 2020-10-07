@@ -7,7 +7,7 @@ version=$1
 PROJECT_NAME="helm-mirror"
 PROJECT_GH="openSUSE/$PROJECT_NAME"
 
-: ${HELM_PLUGIN_PATH:="$(helm home --debug=false)/plugins/helm-mirror"}
+: ${HELM_PLUGIN_DIR:="$(helm home --debug=false)/plugins/helm-mirror"}
 
 # Convert the HELM_PLUGIN_PATH to unix if cygpath is
 # available. This is the case when using MSYS2 or Cygwin
@@ -15,7 +15,7 @@ PROJECT_GH="openSUSE/$PROJECT_NAME"
 # need a Unix path
 
 if type cygpath > /dev/null 2>&1; then
-  HELM_PLUGIN_PATH=$(cygpath -u $HELM_PLUGIN_PATH)
+  HELM_PLUGIN_DIR=$(cygpath -u $HELM_PLUGIN_DIR)
 fi
 
 if [[ $SKIP_BIN_INSTALL == "1" ]]; then
@@ -102,10 +102,10 @@ installFile() {
   rm -rf "$HELM_TMP"
   mkdir -p "$HELM_TMP"
   tar xf "$PLUGIN_TMP_FILE" -C "$HELM_TMP" --strip-components=1
-  echo "Preparing to install into ${HELM_PLUGIN_PATH}"
-  mkdir -p "$HELM_PLUGIN_PATH/bin"
+  echo "Preparing to install into ${HELM_PLUGIN_DIR}"
+  mkdir -p "$HELM_PLUGIN_DIR/bin"
   pushd "$HELM_TMP"
-  cp -r $HELM_TMP/* "$HELM_PLUGIN_PATH"
+  cp -r $HELM_TMP/* "$HELM_PLUGIN_DIR"
   popd
 }
 
@@ -122,8 +122,8 @@ fail_trap() {
 # testVersion tests the installed client to make sure it is working.
 testVersion() {
   set +e
-  echo "$PROJECT_NAME installed into $HELM_PLUGIN_PATH"
-  $HELM_PLUGIN_PATH/bin/helm-mirror version
+  echo "$PROJECT_NAME installed into $HELM_PLUGIN_DIR"
+  $HELM_PLUGIN_DIR/bin/helm-mirror version
   set -e
 }
 
